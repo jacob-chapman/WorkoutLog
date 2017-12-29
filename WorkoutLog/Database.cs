@@ -4,6 +4,7 @@ using Splat;
 using WorkoutLog.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace WorkoutLog
 {
@@ -14,7 +15,7 @@ namespace WorkoutLog
         protected SQLiteAsyncConnection _connection;
         protected IFileSystemService _fileSystemService;
 
-        protected abstract void Init();
+        public abstract Task Init();
 
         protected Database()
         {
@@ -39,9 +40,13 @@ namespace WorkoutLog
     {
         protected override string EntityName => "Workout";
 
-        protected override async void Init()
+        public override async Task Init()
         {
-            await CreateWorkoutDatabaseTables();
+            var createTablesTask = CreateWorkoutDatabaseTables();
+
+            await Task.WhenAll(createTablesTask);
+
+            return;
         }
 
         #region Create
@@ -59,7 +64,7 @@ namespace WorkoutLog
             return;
         }
 
-        private async Task CreateWorkoutItem(Workout item)
+        public async Task CreateWorkoutItem(Workout item)
         {
             try
             {
@@ -71,7 +76,7 @@ namespace WorkoutLog
             }
         }
 
-        private async Task CreateSetItem(Set item)
+        public async Task CreateSetItem(Set item)
         {
             try
             {
@@ -83,7 +88,7 @@ namespace WorkoutLog
             }
         }
 
-        private async Task CreateExerciseItem(Exercise item)
+        public async Task CreateExerciseItem(Exercise item)
         {
             try
             {
@@ -96,6 +101,15 @@ namespace WorkoutLog
         }
 
         #endregion
+
+        #region Helpers
+
+        public bool DoesExisit<T>(T item)
+        {
+            return false;
+        }
+
+        #endregion Helpers
 
         #region Query
 

@@ -5,7 +5,7 @@ namespace WorkoutLog
 {
     public class Module
     {
-        public void Init()
+        public static void Init()
         {
             //Locator.CurrentMutable.Register(() => new );
         }

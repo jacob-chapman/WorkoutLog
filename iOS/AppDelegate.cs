@@ -1,5 +1,6 @@
 ﻿using Foundation;
 using UIKit;
+using WorkoutLog.Services;
 
 namespace WorkoutLog.iOS
 {
@@ -20,6 +21,13 @@ namespace WorkoutLog.iOS
         {
             // Override point for customization after application launch.
             // If not required for your application you can safely delete this method
+
+            //Setup DI
+            Module.Init();
+            iOSModule.Init();
+
+            //Setup Database Services
+            WorkoutDatabaseService.Initialize();
 
             return true;
         }

@@ -8,6 +8,7 @@ namespace WorkoutLog.Models
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
+        [Unique]
         public string Title { get; set; }
 
         public MuscleGroup MuscleGroup { get; set; }

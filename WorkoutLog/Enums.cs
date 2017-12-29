@@ -21,7 +21,8 @@ namespace WorkoutLog
         Legs = 5,
         Biceps = 6,
         Triceps = 7,
-        None = 8
+        Traps = 8,
+        None = 9
     }
 
     public enum IWorkoutItemType
