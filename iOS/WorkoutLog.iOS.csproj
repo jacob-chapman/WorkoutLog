@@ -99,6 +99,9 @@
     <Reference Include="SQLite-net">
       <HintPath>..\packages\sqlite-net-pcl.1.4.118\lib\netstandard1.1\SQLite-net.dll</HintPath>
     </Reference>
+    <Reference Include="Masonry.iOS">
+      <HintPath>..\packages\Masonry.1.0.2\lib\Xamarin.iOS\Masonry.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WorkoutLog\WorkoutLog.csproj">
@@ -113,10 +116,12 @@
   <ItemGroup>
     <Folder Include="Resources\" />
     <Folder Include="ClientServices\" />
+    <Folder Include="Views\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="DataSources\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
-    <InterfaceDefinition Include="Main.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -132,6 +137,9 @@
     </Compile>
     <Compile Include="ClientServices\FileSystemService.cs" />
     <Compile Include="iOSModule.cs" />
+    <Compile Include="Controllers\WorkoutHomeViewController.cs" />
+    <Compile Include="DataSources\WorkoutHomeTableDataSource.cs" />
+    <Compile Include="Controllers\WorkoutSessionViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace WorkoutLog.Models
 {
@@ -8,8 +9,8 @@ namespace WorkoutLog.Models
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
-        [Indexed]
-        public int ExerciseId { get; set; }
+        [OneToOne]
+        public Exercise Exercise { get; set; }
 
         public int? Reps { get; set; }
 

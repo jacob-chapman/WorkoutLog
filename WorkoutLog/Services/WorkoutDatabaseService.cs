@@ -1,5 +1,7 @@
 ﻿using System;
 using WorkoutLog.Models;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 namespace WorkoutLog.Services
 {
     //todo database service with query filters
@@ -15,6 +17,17 @@ namespace WorkoutLog.Services
 
             CreateExercise();
         }
+
+        public static async Task<IEnumerable<Workout>> GetWorkoutHistory()
+        {
+            IEnumerable<Workout> workouts;
+
+            workouts = await _database.GetWorkouts();
+            //todo maybe some validation or try catch
+            return workouts;
+        }
+
+        #region Creation
 
         private static async void CreateExercise()
         {
@@ -60,7 +73,15 @@ namespace WorkoutLog.Services
                 Title = "Dumbbell Shrug"
             };
 
+            await _database.CreateExerciseItem(arnoldPress);
+            await _database.CreateExerciseItem(latRaise);
+            await _database.CreateExerciseItem(militaryPress);
+            await _database.CreateExerciseItem(frontRaise);
+            await _database.CreateExerciseItem(uprightRow);
             await _database.CreateExerciseItem(shrug);
+
         }
+
+        #endregion Creation
     }
 }

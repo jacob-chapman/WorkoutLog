@@ -41,6 +41,8 @@
     <Compile Include="IFileSystemService.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Services\WorkoutDatabaseService.cs" />
+    <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="PersistentSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -76,6 +78,12 @@
     </Reference>
     <Reference Include="SQLiteNetExtensionsAsync">
       <HintPath>..\packages\SQLiteNetExtensions.Async.2.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\SQLiteNetExtensionsAsync.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings.Abstractions">
+      <HintPath>..\packages\Xam.Plugins.Settings.3.1.1\lib\netstandard1.0\Plugin.Settings.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings">
+      <HintPath>..\packages\Xam.Plugins.Settings.3.1.1\lib\netstandard1.0\Plugin.Settings.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

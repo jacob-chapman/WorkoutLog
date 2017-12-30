@@ -1,6 +1,7 @@
 ﻿using Foundation;
 using UIKit;
 using WorkoutLog.Services;
+using WorkoutLog.iOS.Controllers;
 
 namespace WorkoutLog.iOS
 {
@@ -28,6 +29,14 @@ namespace WorkoutLog.iOS
 
             //Setup Database Services
             WorkoutDatabaseService.Initialize();
+
+            Window = new UIWindow(UIScreen.MainScreen.Bounds);
+
+            var rootVc = new WorkoutHomeViewController();
+
+            Window.RootViewController = new UINavigationController(rootVc);
+
+            Window.MakeKeyAndVisible();
 
             return true;
         }
