@@ -6,7 +6,7 @@ using WorkoutLog.ViewModels;
 using Masonry;
 namespace WorkoutLog.iOS.DataSources
 {
-    public class WorkoutHomeTableDataSource : UITableViewDataSource
+    public class WorkoutHomeTableDataSource : UITableViewSource
     {
         public WorkoutHomeTableDataSource()
         {
@@ -33,10 +33,16 @@ namespace WorkoutLog.iOS.DataSources
             return cell;
         }
 
-        public override nint RowsInSection(UITableView tableView, nint section)
+        public override nint RowsInSection(UITableView tableview, nint section)
         {
             return Items?.Count ?? 0;
         }
+
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        {
+            return;
+        }
+
     }
 
     //todo separate out; add action for button

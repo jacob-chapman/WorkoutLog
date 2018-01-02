@@ -2,6 +2,7 @@
 using WorkoutLog.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 namespace WorkoutLog.Services
 {
     //todo database service with query filters
@@ -15,7 +16,7 @@ namespace WorkoutLog.Services
 
             await _database.Init();
 
-            CreateExercise();
+            CreateExercises();
         }
 
         public static async Task<IEnumerable<Workout>> GetWorkoutHistory()
@@ -27,9 +28,47 @@ namespace WorkoutLog.Services
             return workouts;
         }
 
+        public static async Task<IEnumerable<Exercise>> GetExercises()
+        {
+            IEnumerable<Exercise> exercises;
+
+            exercises = await _database.GetExercises();
+
+            exercises.GroupBy(x => x.MuscleGroup);
+
+            return exercises;
+        }
+
         #region Creation
 
-        private static async void CreateExercise()
+        public static async Task<Workout> CreateWorkout(string title)
+        {
+            Workout workout = new Workout()
+            {
+                Title = title,
+                WorkoutDate = DateTime.Now.ToLocalTime()
+            };
+
+            var workoutId = await _database.CreateWorkoutItem(workout);
+
+            if (!workoutId.HasValue) return null;
+
+            var newWorkout = await _database.GetWorkout(workoutId.Value);
+
+            return newWorkout;
+        }
+
+        public static async Task CreateSet(Set set)
+        {
+            var setId = await _database.CreateSetItem(set);
+        }
+
+        public static async Task CreateExercise(Exercise item)
+        {
+            await _database.CreateExerciseItem(item);
+        }
+
+        private static async void CreateExercises()
         {
             Exercise arnoldPress = new Exercise()
             {

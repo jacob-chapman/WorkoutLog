@@ -30,4 +30,11 @@ namespace WorkoutLog
         AddWorkout = 0,
         WorkoutItem = 1
     }
+
+    public enum IWorkoutSessionItemType
+    {
+        AddExercise,
+        SetsItem,
+        FinishWorkout
+    }
 }

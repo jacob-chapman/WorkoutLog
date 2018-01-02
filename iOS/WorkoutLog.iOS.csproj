@@ -140,6 +140,11 @@
     <Compile Include="Controllers\WorkoutHomeViewController.cs" />
     <Compile Include="DataSources\WorkoutHomeTableDataSource.cs" />
     <Compile Include="Controllers\WorkoutSessionViewController.cs" />
+    <Compile Include="DataSources\WorkoutSessionDataSource.cs" />
+    <Compile Include="Controllers\AddExerciseViewController.cs" />
+    <Compile Include="Views\AddExerciseTableCell.cs" />
+    <Compile Include="Views\FinishWorkoutTableCell.cs" />
+    <Compile Include="Views\SetsTableCell.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

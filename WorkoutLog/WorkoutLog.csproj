@@ -43,6 +43,11 @@
     <Compile Include="Services\WorkoutDatabaseService.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="PersistentSettings.cs" />
+    <Compile Include="Views\IWorkoutSessionView.cs" />
+    <Compile Include="ViewModels\WorkoutSessionViewModel.cs" />
+    <Compile Include="Presenters\WorkoutSessionPresenter.cs" />
+    <Compile Include="ViewModels\AddExerciseViewModel.cs" />
+    <Compile Include="Presenters\AddExercisePresenter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

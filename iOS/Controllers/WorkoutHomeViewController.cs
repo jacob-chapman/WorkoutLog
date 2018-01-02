@@ -31,7 +31,7 @@ namespace WorkoutLog.iOS.Controllers
         {
             base.ViewDidLoad();
 
-            _workoutHomeTableView.DataSource = dataSource;
+            _workoutHomeTableView.Source = dataSource;
             _workoutHomeTableView.RegisterClassForCellReuse(typeof(UITableViewCell), WorkoutHomeTableDataSource.CellIdentifier);
 
             dataSource.AddWorkoutAction = () =>

@@ -5,6 +5,7 @@ using WorkoutLog.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using SQLiteNetExtensionsAsync.Extensions;
 
 namespace WorkoutLog
 {
@@ -64,28 +65,47 @@ namespace WorkoutLog
             return;
         }
 
-        public async Task CreateWorkoutItem(Workout item)
+        public async Task<int?> CreateWorkoutItem(Workout item)
         {
             try
             {
-                await _connection.InsertAsync(item);
+                var id = await _connection.InsertAsync(item);
+                return id;
             }
             catch (Exception ex)
             {
                 LogHost.Default.Error($"WorkoutDatabase.CreateWorkoutItem: {ex.Message}");
             }
+
+            return null;
         }
 
-        public async Task CreateSetItem(Set item)
+        public async Task<int?> CreateSetItem(Set item)
         {
             try
             {
-                await _connection.InsertAsync(item);
+                return await _connection.InsertAsync(item);
             }
             catch (Exception ex)
             {
                 LogHost.Default.Error($"WorkoutDatabase.CreateSetItem: {ex.Message}");
             }
+
+            return null;
+        }
+
+        public async Task UpdateWorkoutWithSet(Workout workout)
+        {
+            try
+            {
+                await _connection.UpdateWithChildrenAsync(workout);
+            }
+            catch (Exception ex)
+            {
+                LogHost.Default.Error($"WorkoutDatabase.CreateSetItem: {ex.Message}");
+            }
+
+            return;
         }
 
         public async Task CreateExerciseItem(Exercise item)
@@ -113,9 +133,19 @@ namespace WorkoutLog
 
         #region Query
 
+        public async Task<IEnumerable<Exercise>> GetExercises()
+        {
+            return await _connection.Table<Exercise>().ToListAsync();
+        }
+
         public async Task<IEnumerable<Workout>> GetWorkouts()
         {
             return await _connection.Table<Workout>().ToListAsync();
+        }
+
+        public async Task<Workout> GetWorkout(int id)
+        {
+            return await _connection.Table<Workout>().Where(x => x.ID == id).FirstOrDefaultAsync();
         }
 
         #endregion Query
