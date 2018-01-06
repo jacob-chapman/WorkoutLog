@@ -32,16 +32,21 @@ namespace WorkoutLog.ViewModels
 
         public List<Set> Sets { get; set; }
 
-        public SetsViewModel()
+        private Exercise _exercise;
+        private Action<Set> _workoutUpdateAction;
+
+        public SetsViewModel(Exercise exercise, Action<Set> workoutUpdateAction)
         {
             Sets = new List<Set>();
+            _exercise = exercise;
+            _workoutUpdateAction = workoutUpdateAction;
         }
 
-        public async Task<Set> CreateSet(Exercise exercise, int? reps, double? weight, double? time)
+        public async Task<Set> CreateSet(int? reps, double? weight, double? time)
         {
             Set set = new Set()
             {
-                Exercise = exercise,
+                Exercise = _exercise,
                 Reps = reps,
                 Weight = weight,
                 Time = time
@@ -49,10 +54,16 @@ namespace WorkoutLog.ViewModels
 
             //Create the set item
             await WorkoutDatabaseService.CreateSet(set);
+            _workoutUpdateAction?.Invoke(set);
 
             Sets.Add(set);
 
             return set;
+        }
+
+        public async Task UpdateSet(Set set)
+        {
+            await WorkoutDatabaseService.UpdateSet(set);
         }
     }
 
@@ -109,7 +120,7 @@ namespace WorkoutLog.ViewModels
 
         public List<IWorkoutSessionItem> Items { get; set; }
 
-        public async void CreateAndSetWorkout(string title)
+        public async Task CreateAndSetWorkout(string title)
         {
             var dbWorkout = await WorkoutDatabaseService.CreateWorkout(title);
 
@@ -118,16 +129,17 @@ namespace WorkoutLog.ViewModels
             Workout = dbWorkout;
         }
 
-        public SetsViewModel CreateSetsViewModel()
+        public async Task<SetsViewModel> CreateSetsViewModel(Exercise exercise)
         {
-            SetsViewModel vm = new SetsViewModel();
+            SetsViewModel vm = new SetsViewModel(exercise, UpdateWorkoutWithSet);
+            await vm.CreateSet(null, null, null);
 
             Items.Insert(setsViewModelIndex, vm);
 
             return vm;
         }
 
-        public async void UpdateWorkoutWithSet(Set set)
+        public void UpdateWorkoutWithSet(Set set)
         {
             if (Workout.Sets == null)
                 Workout.Sets = new List<Set>();

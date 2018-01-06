@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 namespace WorkoutLog
 {
     public enum ExerciseType
@@ -9,6 +10,11 @@ namespace WorkoutLog
         Body = 3,
         Other = 4,
         None = 5
+    }
+
+    public static class WorkoutLogExtensions
+    {
+        //public static List<> GetEnumAsList 
     }
 
     public enum MuscleGroup

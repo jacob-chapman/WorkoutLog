@@ -39,6 +39,15 @@ namespace WorkoutLog.Services
             return exercises;
         }
 
+        #region Update
+
+        public static async Task UpdateSet(Set set)
+        {
+            await _database.UpdateSet(set);
+        }
+
+        #endregion Update
+
         #region Creation
 
         public static async Task<Workout> CreateWorkout(string title)
@@ -53,9 +62,7 @@ namespace WorkoutLog.Services
 
             if (!workoutId.HasValue) return null;
 
-            var newWorkout = await _database.GetWorkout(workoutId.Value);
-
-            return newWorkout;
+            return workout;
         }
 
         public static async Task CreateSet(Set set)

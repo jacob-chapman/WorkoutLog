@@ -131,6 +131,22 @@ namespace WorkoutLog
 
         #endregion Helpers
 
+        #region Update
+
+        public async Task UpdateSet(Set set)
+        {
+            try
+            {
+                await _connection.UpdateAsync(set);
+            }
+            catch (Exception ex)
+            {
+                LogHost.Default.Error("Database.UpdateSet", ex.ToString());
+            }
+        }
+
+        #endregion Update
+
         #region Query
 
         public async Task<IEnumerable<Exercise>> GetExercises()

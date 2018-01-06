@@ -9,6 +9,8 @@ namespace WorkoutLog.Presenters
     public interface IAddExerciseView : IView
     {
         void Render(AddExerciseViewModel viewModel);
+
+        void DisplayError(string message);
     }
 
     public class AddExercisePresenter : IPresenter
@@ -16,7 +18,6 @@ namespace WorkoutLog.Presenters
         public AddExercisePresenter()
         {
         }
-
 
         private AddExerciseViewModel _viewModel;
 
@@ -42,6 +43,12 @@ namespace WorkoutLog.Presenters
 
         public async void CreateExercise(Exercise exercise)
         {
+            if (string.IsNullOrEmpty(exercise.Title))
+            {
+                View?.DisplayError("Exercise needs a Title");
+                return;
+            }
+
             await WorkoutDatabaseService.CreateExercise(exercise);
 
             _viewModel.AddExercise(exercise);

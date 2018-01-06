@@ -112,6 +112,15 @@
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_check_box.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_check_box.imageset\ic_check_box.png" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_check_box.imageset\ic_check_box_2x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_check_box.imageset\ic_check_box_3x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_check_box_outline_blank.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_check_box_outline_blank.imageset\ic_check_box_outline_blank.png" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_check_box_outline_blank.imageset\ic_check_box_outline_blank_2x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_check_box_outline_blank.imageset\ic_check_box_outline_blank_3x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -145,6 +154,7 @@
     <Compile Include="Views\AddExerciseTableCell.cs" />
     <Compile Include="Views\FinishWorkoutTableCell.cs" />
     <Compile Include="Views\SetsTableCell.cs" />
+    <Compile Include="Controllers\CreateExerciseViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

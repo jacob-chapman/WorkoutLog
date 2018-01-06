@@ -6,6 +6,7 @@ using WorkoutLog.ViewModels;
 using WorkoutLog.Presenters;
 using Masonry;
 using WorkoutLog.iOS.Views;
+using WorkoutLog.Models;
 
 namespace WorkoutLog.iOS.Controllers
 {
@@ -38,7 +39,7 @@ namespace WorkoutLog.iOS.Controllers
             _dataSource = new WorkoutSessionDataSource();
 
             _dataSource.AddExerciseAction = AddExerciseAction;
-            _setsTableView.BackgroundColor = UIColor.Clear;
+            _setsTableView.BackgroundColor = UIColor.White;
             _setsTableView.Source = _dataSource;
             _setsTableView.RegisterClassForCellReuse(typeof(SetsTableCell), SetsTableCell.CellIdentifier);
             _setsTableView.RegisterClassForCellReuse(typeof(AddExerciseTableCell), AddExerciseTableCell.CellIdentifier);
@@ -58,10 +59,15 @@ namespace WorkoutLog.iOS.Controllers
 
         #region Helpers
 
+        private void ExerciseAdded(Exercise exercise)
+        {
+            _presenter.CreateNewSet(exercise);
+        }
+
         private void AddExerciseAction()
         {
-            var vc = new UINavigationController(new AddExerciseViewController());
-            vc.ModalPresentationStyle = UIModalPresentationStyle.OverFullScreen;
+            var vc = new UINavigationController(new AddExerciseViewController(ExerciseAdded));
+            vc.ModalPresentationStyle = UIModalPresentationStyle.OverCurrentContext;
 
             NavigationController?.PresentViewController(vc, true, null);
         }
@@ -92,6 +98,21 @@ namespace WorkoutLog.iOS.Controllers
             _viewModel = viewModel;
             _dataSource.Items = viewModel.Items;
             _setsTableView.ReloadData();
+            NavigationItem.Title = _viewModel.Workout.Title;
+        }
+
+        public void AskForWorkoutTitle()
+        {
+            var alertController = UIAlertController.Create("Workout", "Please enter a name for this workout?", UIAlertControllerStyle.Alert);
+
+            alertController.AddTextField((textField) => { });
+
+            alertController.AddAction(UIAlertAction.Create("Save", UIAlertActionStyle.Default, (obj) =>
+            {
+                _presenter.CreateWorkout(alertController.TextFields[0].Text);
+            }));
+
+            PresentViewController(alertController, true, null);
         }
 
         #endregion IWorkoutSessionView

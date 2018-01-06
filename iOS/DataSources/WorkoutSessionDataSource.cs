@@ -35,10 +35,21 @@ namespace WorkoutLog.iOS.DataSources
                     return finishWorkoutCell;
                 case IWorkoutSessionItemType.SetsItem:
                     var setsTableCell = tableView.DequeueReusableCell(SetsTableCell.CellIdentifier, indexPath) as SetsTableCell;
+                    var setsVm = currentItem as SetsViewModel;
+                    setsTableCell.Bind(setsVm);
                     return setsTableCell;
             }
 
             return new UITableViewCell();
+        }
+
+        public override string TitleForHeader(UITableView tableView, nint section)
+        {
+            var item = Items[(int)section];
+
+            if (item.ItemType != IWorkoutSessionItemType.SetsItem) return string.Empty;
+
+            return (item as SetsViewModel).Sets[0].Exercise.Title;
         }
 
         public override nint NumberOfSections(UITableView tableView)
