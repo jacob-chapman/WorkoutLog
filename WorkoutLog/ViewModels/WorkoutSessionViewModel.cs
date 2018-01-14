@@ -13,11 +13,20 @@ namespace WorkoutLog.ViewModels
     public interface IWorkoutSessionItem
     {
         IWorkoutSessionItemType ItemType { get; }
+
+        /// <summary>
+        /// Value to determine which exercise the view model is related too.
+        /// Helps determine the spacing on the UI
+        /// </summary>
+        /// <value>The related to exercise. Null shows the filler items</value>
+        Exercise RelatedToExercise { get; set; }
     }
 
     public class AddExerciseItemViewModel : IWorkoutSessionItem
     {
         public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.AddExercise;
+
+        public Exercise RelatedToExercise { get; set; } = null;
 
         public string ButtonTitle => "Add Exercise";
     }
@@ -26,12 +35,16 @@ namespace WorkoutLog.ViewModels
     {
         public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.FinishWorkout;
 
+        public Exercise RelatedToExercise { get; set; } = null;
+
         public string ButtonTitle => "Finish Workout";
     }
 
     public class SetHeaderViewModel : IWorkoutSessionItem
     {
         public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.SetsHeader;
+
+        public Exercise RelatedToExercise { get; set; }
 
         public string SetNumberHeader = "Sets Number";
 
@@ -48,12 +61,29 @@ namespace WorkoutLog.ViewModels
     {
         public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.SetItem;
 
-        public Set Set { get; set; }
+        public Exercise RelatedToExercise { get; set; }
+
+        public string SetNumber { get; set; }
+
+        public Set Set
+        {
+            get => _set;
+
+            set
+            {
+                _set = value;
+                RelatedToExercise = _set.Exercise;
+            }
+        }
+
+        private Set _set;
     }
 
     public class AddSetViewModel : IWorkoutSessionItem
     {
         public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.AddSet;
+
+        public Exercise RelatedToExercise { get; set; }
 
         public string Text = "Add Set";
     }
@@ -79,12 +109,11 @@ namespace WorkoutLog.ViewModels
         /// </summary>
         /// <returns>The set view model index.</returns>
         /// <param name="set">Set.</param>
-        private int GetSetViewModelIndex(Set set)
+        private (int, string) GetSetViewModelIndex(Set set)
         {
             int index = 0;
-            index += Items.Count - 2; //subtract two for the add exercise row and finish workout row
 
-            if (!Items.Any(x => x.ItemType == IWorkoutSessionItemType.SetsHeader)) return index;
+            if (!Items.Any(x => x.ItemType == IWorkoutSessionItemType.SetsHeader)) return (index, 1.ToString());
 
             do
             {
@@ -93,8 +122,10 @@ namespace WorkoutLog.ViewModels
                 if (Items[index].ItemType == IWorkoutSessionItemType.SetItem)
                 {
                     var setItem = Items[index] as SetViewModel;
+                    //Check for the same exercise 
                     if (setItem.Set.Exercise == set.Exercise)
                     {
+                        //Same exercise need to get index after the other sets
                         //Find the total count of same exercise sets
                         var itemCount = Items.Count(x =>
                         {
@@ -103,26 +134,31 @@ namespace WorkoutLog.ViewModels
                             return false;
                         });
 
-                        index += itemCount;
+                        //break the loop since we have the correct set collection
+                        return (index += itemCount, (itemCount + 1).ToString());
                     }
                     else
                     {
+                        //we are in the wrong set collection
+                        //get the item in the set collection
                         var item = Items[index] as SetViewModel;
-
+                        //Now get the total set count of the current set collection
                         var count = Items.Count(x =>
                         {
                             if ((x as SetViewModel)?.Set.Exercise == item.Set.Exercise) return true;
                             return false;
                         });
-
+                        //add to index
                         index += count;
                     }
                 }
 
+                if (Items[index].ItemType == IWorkoutSessionItemType.AddSet) index++;
+
             }
             while (Items.Count() > index + 2); //2 for the trailing view models always at the end
 
-            return index;
+            return (index, "1");
         }
 
         private int addExerciseItemIndex
@@ -178,11 +214,11 @@ namespace WorkoutLog.ViewModels
             }
 
             //Now get the index to insert the set at 
-            var index = GetSetViewModelIndex(set);
+            var (index, setNumber) = GetSetViewModelIndex(set);
 
-            Items.Insert(index, new AddSetViewModel());
-            Items.Insert(index, new SetViewModel() { Set = set });
-            Items.Insert(index, new SetHeaderViewModel());
+            Items.Insert(index, new AddSetViewModel() { RelatedToExercise = set.Exercise });
+            Items.Insert(index, new SetViewModel() { Set = set, SetNumber = setNumber });
+            Items.Insert(index, new SetHeaderViewModel() { RelatedToExercise = set.Exercise });
 
         }
 
@@ -199,11 +235,12 @@ namespace WorkoutLog.ViewModels
                 throw new Exception("Set Object cannot be null!");
             }
 
-            var index = GetSetViewModelIndex(set);
+            var (index, setNumber) = GetSetViewModelIndex(set);
 
             Items.Insert(index, new SetViewModel()
             {
-                Set = set
+                Set = set,
+                SetNumber = setNumber
             });
         }
 

@@ -38,9 +38,9 @@ namespace WorkoutLog.iOS.Controllers
             _setsTableView = new UITableView(new CoreGraphics.CGRect(), UITableViewStyle.Grouped);
             _dataSource = new WorkoutSessionDataSource();
 
-            _dataSource.AddExerciseAction = AddExerciseAction;
             _setsTableView.BackgroundColor = UIColor.White;
             _setsTableView.Source = _dataSource;
+            _setsTableView.RegisterClassForCellReuse(typeof(AddSetTableCell), AddSetTableCell.CellIdentifier);
             _setsTableView.RegisterClassForCellReuse(typeof(SetsHeaderTableCell), SetsHeaderTableCell.CellIdentifier);
             _setsTableView.RegisterClassForCellReuse(typeof(SetTableCell), SetTableCell.CellIdentifier);
             _setsTableView.RegisterClassForCellReuse(typeof(AddExerciseTableCell), AddExerciseTableCell.CellIdentifier);
@@ -52,6 +52,11 @@ namespace WorkoutLog.iOS.Controllers
             _presenter = new WorkoutSessionPresenter();
             _presenter.View = this;
             _presenter.Initialize();
+
+            //Set data source actions
+            _dataSource.AddExerciseAction = AddExerciseAction;
+            _dataSource.AddSetToExisitingExercise = _presenter.AddSet;
+
             View.BackgroundColor = UIColor.LightGray;
 
             View.AddSubview(_setsTableView);
@@ -74,6 +79,11 @@ namespace WorkoutLog.iOS.Controllers
             vc.ModalPresentationStyle = UIModalPresentationStyle.OverCurrentContext;
 
             NavigationController?.PresentViewController(vc, true, null);
+        }
+
+        private void AddSetToExisitingExercise(Exercise exercise)
+        {
+            _presenter.AddSet(exercise);
         }
 
         private void FinishExercise()

@@ -8,8 +8,9 @@ namespace WorkoutLog
         Dumbbell = 1,
         Machine = 2,
         Body = 3,
-        Other = 4,
-        None = 5
+        Cardio = 4,
+        Other = 5,
+        None = 6
     }
 
     public static class WorkoutLogExtensions

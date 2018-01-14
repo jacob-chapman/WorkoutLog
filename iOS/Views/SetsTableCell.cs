@@ -179,9 +179,9 @@ namespace WorkoutLog.iOS.Views
             SetNeedsUpdateConstraints();
         }
 
-        public void Bind(SetViewModel setViewModel, string setNumber)
+        public void Bind(SetViewModel setViewModel)
         {
-            _setNumber.Text = setNumber;
+            _setNumber.Text = setViewModel.SetNumber;
 
             var set = setViewModel.Set;
 
@@ -209,12 +209,28 @@ namespace WorkoutLog.iOS.Views
 
         private bool _isInitialized = false;
         public UILabel _lblAddSet;
-
+        public Action AddSetAction;
+        public static string CellIdentifier = "addSet";
         private void Initialize()
         {
             _lblAddSet = new UILabel();
             _lblAddSet.TextColor = UIColor.Black;
             _lblAddSet.TextAlignment = UITextAlignment.Center;
+
+            ContentView.AddSubview(_lblAddSet);
+
+            SetNeedsUpdateConstraints();
+        }
+
+        public override void UpdateConstraints()
+        {
+            base.UpdateConstraints();
+
+            _lblAddSet.MakeConstraints(make =>
+            {
+                make.CenterX.EqualTo(ContentView.CenterX());
+                make.CenterY.EqualTo(ContentView.CenterY());
+            });
         }
 
         public void Bind(AddSetViewModel viewModel)
