@@ -41,6 +41,9 @@ namespace WorkoutLog
     {
         AddExercise,
         SetsItem,
-        FinishWorkout
+        FinishWorkout,
+        SetsHeader,
+        SetItem,
+        AddSet
     }
 }

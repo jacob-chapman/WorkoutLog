@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using WorkoutLog.Services;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Xml.Linq;
+using System.Runtime.CompilerServices;
 
 namespace WorkoutLog.ViewModels
 {
@@ -26,45 +29,33 @@ namespace WorkoutLog.ViewModels
         public string ButtonTitle => "Finish Workout";
     }
 
-    public class SetsViewModel : IWorkoutSessionItem
+    public class SetHeaderViewModel : IWorkoutSessionItem
     {
-        public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.SetsItem;
+        public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.SetsHeader;
 
-        public List<Set> Sets { get; set; }
+        public string SetNumberHeader = "Sets Number";
 
-        private Exercise _exercise;
-        private Action<Set> _workoutUpdateAction;
+        public string WeightHeader = "Weight";
 
-        public SetsViewModel(Exercise exercise, Action<Set> workoutUpdateAction)
-        {
-            Sets = new List<Set>();
-            _exercise = exercise;
-            _workoutUpdateAction = workoutUpdateAction;
-        }
+        public string RepsHeader = "Reps";
 
-        public async Task<Set> CreateSet(int? reps, double? weight, double? time)
-        {
-            Set set = new Set()
-            {
-                Exercise = _exercise,
-                Reps = reps,
-                Weight = weight,
-                Time = time
-            };
+        public string TimeHeader = "Time";
 
-            //Create the set item
-            await WorkoutDatabaseService.CreateSet(set);
-            _workoutUpdateAction?.Invoke(set);
+        public string CompletedHeader = "Completed";
+    }
 
-            Sets.Add(set);
+    public class SetViewModel : IWorkoutSessionItem
+    {
+        public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.SetItem;
 
-            return set;
-        }
+        public Set Set { get; set; }
+    }
 
-        public async Task UpdateSet(Set set)
-        {
-            await WorkoutDatabaseService.UpdateSet(set);
-        }
+    public class AddSetViewModel : IWorkoutSessionItem
+    {
+        public IWorkoutSessionItemType ItemType => IWorkoutSessionItemType.AddSet;
+
+        public string Text = "Add Set";
     }
 
     //Controls the current workout session
@@ -83,14 +74,55 @@ namespace WorkoutLog.ViewModels
 
         #region Indexes
 
-        private int setsViewModelIndex
+        /// <summary>
+        /// Gets the index to insert the set model given
+        /// </summary>
+        /// <returns>The set view model index.</returns>
+        /// <param name="set">Set.</param>
+        private int GetSetViewModelIndex(Set set)
         {
-            get
+            int index = 0;
+            index += Items.Count - 2; //subtract two for the add exercise row and finish workout row
+
+            if (!Items.Any(x => x.ItemType == IWorkoutSessionItemType.SetsHeader)) return index;
+
+            do
             {
-                int index = 0;
-                index += Items.Count - 2;
-                return index;
+                //Check for item being header
+                if (Items[index].ItemType == IWorkoutSessionItemType.SetsHeader) index++;
+                if (Items[index].ItemType == IWorkoutSessionItemType.SetItem)
+                {
+                    var setItem = Items[index] as SetViewModel;
+                    if (setItem.Set.Exercise == set.Exercise)
+                    {
+                        //Find the total count of same exercise sets
+                        var itemCount = Items.Count(x =>
+                        {
+                            var item = x as SetViewModel;
+                            if (item?.Set?.Exercise == set.Exercise) return true;
+                            return false;
+                        });
+
+                        index += itemCount;
+                    }
+                    else
+                    {
+                        var item = Items[index] as SetViewModel;
+
+                        var count = Items.Count(x =>
+                        {
+                            if ((x as SetViewModel)?.Set.Exercise == item.Set.Exercise) return true;
+                            return false;
+                        });
+
+                        index += count;
+                    }
+                }
+
             }
+            while (Items.Count() > index + 2); //2 for the trailing view models always at the end
+
+            return index;
         }
 
         private int addExerciseItemIndex
@@ -120,23 +152,59 @@ namespace WorkoutLog.ViewModels
 
         public List<IWorkoutSessionItem> Items { get; set; }
 
-        public async Task CreateAndSetWorkout(string title)
+        public void InsertWorkout(Workout workout)
         {
-            var dbWorkout = await WorkoutDatabaseService.CreateWorkout(title);
-
-            if (dbWorkout == null) return;
-
-            Workout = dbWorkout;
+            //Check to see if the workout is null -- does not matter if vm workout object has been set already Presenter should control the actual state
+            if (workout != null)
+            {
+                Workout = workout;
+            }
+            else //workout is null throw exception 
+            {
+                throw new Exception("workout object cannot be null!");
+            }
         }
 
-        public async Task<SetsViewModel> CreateSetsViewModel(Exercise exercise)
+        /// <summary>
+        /// Inserts a new exercise into the view model. This will include the Header, and the Add Set model to follow all future sets
+        /// </summary>
+        /// <param name="set">New Exercise Set to insert</param>
+        public void InsertNewSetExercise(Set set)
         {
-            SetsViewModel vm = new SetsViewModel(exercise, UpdateWorkoutWithSet);
-            await vm.CreateSet(null, null, null);
+            //First things first check set value
+            if (set == null)
+            {
+                throw new Exception("Set Object cannot be null!");
+            }
 
-            Items.Insert(setsViewModelIndex, vm);
+            //Now get the index to insert the set at 
+            var index = GetSetViewModelIndex(set);
 
-            return vm;
+            Items.Insert(index, new AddSetViewModel());
+            Items.Insert(index, new SetViewModel() { Set = set });
+            Items.Insert(index, new SetHeaderViewModel());
+
+        }
+
+        /// <summary>
+        /// Inserts an exisiting exercise set into the view model
+        /// </summary>
+        /// <param name="set">Set.</param>
+        public void InsertExistingExerciseSet(Set set)
+        {
+            //First things first again check for null
+            //todo maybe dont throw an exception -- maybe handle gracefully and proceed with alert?
+            if (set == null)
+            {
+                throw new Exception("Set Object cannot be null!");
+            }
+
+            var index = GetSetViewModelIndex(set);
+
+            Items.Insert(index, new SetViewModel()
+            {
+                Set = set
+            });
         }
 
         public void UpdateWorkoutWithSet(Set set)

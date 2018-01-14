@@ -33,11 +33,16 @@ namespace WorkoutLog.iOS.DataSources
                     var finishWorkoutCell = tableView.DequeueReusableCell(FinishWorkoutTableCell.CellIdentifier, indexPath) as FinishWorkoutTableCell;
                     finishWorkoutCell.Bind((currentItem as FinishExerciseViewModel).ButtonTitle);
                     return finishWorkoutCell;
-                case IWorkoutSessionItemType.SetsItem:
-                    var setsTableCell = tableView.DequeueReusableCell(SetsTableCell.CellIdentifier, indexPath) as SetsTableCell;
-                    var setsVm = currentItem as SetsViewModel;
-                    setsTableCell.Bind(setsVm);
-                    return setsTableCell;
+                case IWorkoutSessionItemType.SetItem:
+                    var setTableCell = tableView.DequeueReusableCell(SetTableCell.CellIdentifier, indexPath) as SetTableCell;
+                    var set = currentItem as SetViewModel;
+                    setTableCell.Bind(set, "1");
+                    tableView.ReloadRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Automatic);
+                    return setTableCell;
+                case IWorkoutSessionItemType.SetsHeader:
+                    var setHeaderTableCell = tableView.DequeueReusableCell(SetsHeaderTableCell.CellIdentifier, indexPath) as SetsHeaderTableCell;
+                    setHeaderTableCell.Bind(currentItem as SetHeaderViewModel);
+                    return setHeaderTableCell;
             }
 
             return new UITableViewCell();
@@ -49,7 +54,7 @@ namespace WorkoutLog.iOS.DataSources
 
             if (item.ItemType != IWorkoutSessionItemType.SetsItem) return string.Empty;
 
-            return (item as SetsViewModel).Sets[0].Exercise.Title;
+            return (item as SetViewModel).Set.Exercise.Title;
         }
 
         public override nint NumberOfSections(UITableView tableView)

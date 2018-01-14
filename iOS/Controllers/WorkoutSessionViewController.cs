@@ -41,9 +41,13 @@ namespace WorkoutLog.iOS.Controllers
             _dataSource.AddExerciseAction = AddExerciseAction;
             _setsTableView.BackgroundColor = UIColor.White;
             _setsTableView.Source = _dataSource;
-            _setsTableView.RegisterClassForCellReuse(typeof(SetsTableCell), SetsTableCell.CellIdentifier);
+            _setsTableView.RegisterClassForCellReuse(typeof(SetsHeaderTableCell), SetsHeaderTableCell.CellIdentifier);
+            _setsTableView.RegisterClassForCellReuse(typeof(SetTableCell), SetTableCell.CellIdentifier);
             _setsTableView.RegisterClassForCellReuse(typeof(AddExerciseTableCell), AddExerciseTableCell.CellIdentifier);
             _setsTableView.RegisterClassForCellReuse(typeof(FinishWorkoutTableCell), FinishWorkoutTableCell.CellIdentifier);
+            _setsTableView.EstimatedRowHeight = 200f;
+            _setsTableView.RowHeight = UITableView.AutomaticDimension;
+
 
             _presenter = new WorkoutSessionPresenter();
             _presenter.View = this;
