@@ -94,20 +94,6 @@ namespace WorkoutLog
             return null;
         }
 
-        public async Task UpdateWorkoutWithSet(Workout workout)
-        {
-            try
-            {
-                await _connection.UpdateWithChildrenAsync(workout);
-            }
-            catch (Exception ex)
-            {
-                LogHost.Default.Error($"WorkoutDatabase.CreateSetItem: {ex.Message}");
-            }
-
-            return;
-        }
-
         public async Task CreateExerciseItem(Exercise item)
         {
             try
@@ -133,6 +119,22 @@ namespace WorkoutLog
 
         #region Update
 
+
+        public async Task UpdateWorkoutWithSet(Workout workout)
+        {
+            try
+            {
+                await _connection.UpdateWithChildrenAsync(workout);
+            }
+            catch (Exception ex)
+            {
+                LogHost.Default.Error($"WorkoutDatabase.CreateSetItem: {ex.Message}");
+            }
+
+            return;
+        }
+
+
         public async Task UpdateSet(Set set)
         {
             try
@@ -154,9 +156,9 @@ namespace WorkoutLog
             return await _connection.Table<Exercise>().ToListAsync();
         }
 
-        public async Task<IEnumerable<Workout>> GetWorkouts()
+        public async Task<IEnumerable<Workout>> GetWorkouts(int skipAmount, int takeAmount)
         {
-            return await _connection.Table<Workout>().ToListAsync();
+            return await _connection.Table<Workout>().OrderByDescending(x => x.WorkoutDate).Skip(skipAmount).Take(takeAmount).ToListAsync();
         }
 
         public async Task<Workout> GetWorkout(int id)

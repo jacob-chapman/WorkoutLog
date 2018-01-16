@@ -10,18 +10,21 @@ using WorkoutLog.Models;
 
 namespace WorkoutLog.iOS.Controllers
 {
+    //Todo add args object to be passed in that contains maybe just the id of the workout
     public class WorkoutSessionViewController : UIViewController, IWorkoutSessionView
     {
-        public WorkoutSessionViewController()
+        public WorkoutSessionViewController(Workout workout)
         {
+            _presenter = new WorkoutSessionPresenter(workout);
         }
 
+        private Workout _workout;
         private UITableView _setsTableView;
         private WorkoutSessionDataSource _dataSource;
-
         private WorkoutSessionViewModel _viewModel;
-
         private WorkoutSessionPresenter _presenter;
+
+        public Action OnDismissedAction;
 
         #region Lifecycle
 
@@ -32,7 +35,14 @@ namespace WorkoutLog.iOS.Controllers
             //Nav menu stuff
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem("Close", UIBarButtonItemStyle.Plain, (sender, e) =>
             {
-                NavigationController?.DismissViewController(true, null);
+                NavigationController?.DismissViewController(true, () => OnDismissedAction?.Invoke());
+            });
+
+
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem("Save", UIBarButtonItemStyle.Plain, (sender, e) =>
+            {
+                _presenter.SaveWorkout();
+                NavigationController?.DismissViewController(true, () => OnDismissedAction?.Invoke());
             });
 
             _setsTableView = new UITableView(new CoreGraphics.CGRect(), UITableViewStyle.Grouped);
@@ -48,14 +58,14 @@ namespace WorkoutLog.iOS.Controllers
             _setsTableView.EstimatedRowHeight = 200f;
             _setsTableView.RowHeight = UITableView.AutomaticDimension;
 
-
-            _presenter = new WorkoutSessionPresenter();
             _presenter.View = this;
             _presenter.Initialize();
+
 
             //Set data source actions
             _dataSource.AddExerciseAction = AddExerciseAction;
             _dataSource.AddSetToExisitingExercise = _presenter.AddSet;
+
 
             View.BackgroundColor = UIColor.LightGray;
 

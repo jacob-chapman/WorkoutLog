@@ -4,10 +4,9 @@ using WorkoutLog.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WorkoutLog.Services;
+using System.Linq;
 namespace WorkoutLog.ViewModels
 {
-
-
     public interface IWorkoutHomeItem
     {
         IWorkoutItemType ItemType { get; }
@@ -43,21 +42,14 @@ namespace WorkoutLog.ViewModels
             ViewModels.Add(_addWorkoutHomeItem);
         }
 
-        public async void GetWorkoutHistory()
+        public void InsertWorkoutViewModel(Workout workout)
         {
-            var workouts = await WorkoutDatabaseService.GetWorkoutHistory();
-
-            foreach (var workout in workouts)
+            if (workout == null)
             {
-                _workoutHistory.Add(new WorkoutHomeItem()
-                {
-                    Workout = workout
-                });
+                throw new Exception("Workout Object cannot be null!");
             }
 
-            //todo add only those that are new
-            ViewModels.RemoveAll(x => x.ItemType == IWorkoutItemType.WorkoutItem);
-            ViewModels.AddRange(_workoutHistory);
+            ViewModels.Insert(0, new WorkoutHomeItem() { Workout = workout });
         }
     }
 }

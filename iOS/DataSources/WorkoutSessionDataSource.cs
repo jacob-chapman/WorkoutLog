@@ -22,6 +22,7 @@ namespace WorkoutLog.iOS.DataSources
         public Action<Exercise> AddSetToExisitingExercise;
 
         #endregion Actions
+
         public List<IWorkoutSessionItem> Items { get; set; }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)

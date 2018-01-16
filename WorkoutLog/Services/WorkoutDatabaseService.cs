@@ -19,11 +19,11 @@ namespace WorkoutLog.Services
             CreateExercises();
         }
 
-        public static async Task<IEnumerable<Workout>> GetWorkoutHistory()
+        public static async Task<IEnumerable<Workout>> GetWorkoutHistory(int skipAmount, int takeAmount)
         {
             IEnumerable<Workout> workouts;
 
-            workouts = await _database.GetWorkouts();
+            workouts = await _database.GetWorkouts(skipAmount, takeAmount);
             //todo maybe some validation or try catch
             return workouts;
         }
